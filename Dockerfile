@@ -1,22 +1,19 @@
 # Use an official Python runtime as a parent image
 FROM python:3.8-slim
-
-# Set the working directory in docker
-WORKDIR /app
-
-# Copy the current directory contents into the container at /app
-COPY . /app
-
+#installation of prerequsites
 RUN apt-get update -qq && \
     apt-get install -y --no-install-recommends build-essential supervisor && \
     apt-get clean && \
     pip install rasa
 
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+# Set the working directory in docker
+WORKDIR /app
 
-ENV PORT=5005
+# Copy the current directory contents into the container at /app
+COPY . .
 
-EXPOSE 5005
+USER 1001
 
-# Start processes
-CMD ["/usr/bin/supervisord"]
+ENTRYPOINT [ "rasa" ]
+
+CMD [ "run", "--enable-api" , "--port" , "5005"]
